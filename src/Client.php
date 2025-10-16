@@ -251,7 +251,12 @@ class Client
                 $this->handleErrorResponse($json['error'], $json['message'] ?? null, $json);
             }
 
-            return $json['response'] ?? $json;
+            if (isset($json['response']) && empty($json['response']['request_id'])) {
+                $json['response']['request_id'] = $json['request_id'] ?? '';
+                return $json['response'];
+            }
+
+            return $json;
         }
 
         return $body;
