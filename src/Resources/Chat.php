@@ -98,11 +98,12 @@ class Chat extends Resource
      * API: v2.sellerchat.delete_conversation
      * To delete a specific conversation
      */
-    public function deleteConversation($conversation_id)
+    public function deleteConversation($conversation_id, $business_type = 0)
     {
         return $this->call('POST', 'sellerchat/delete_conversation', [
             RequestOptions::JSON => [
                 'conversation_id' => $conversation_id,
+                'business_type' => $business_type,
             ],
         ]);
     }
@@ -146,12 +147,13 @@ class Chat extends Resource
      * API: v2.sellerchat.read_conversation
      * To send read request for a specific conversation
      */
-    public function readConversation($conversation_id, $last_read_message_id)
+    public function readConversation($conversation_id, $last_read_message_id, $business_type = 0)
     {
         return $this->call('POST', 'sellerchat/read_conversation', [
             RequestOptions::JSON => [
                 'conversation_id' => $conversation_id,
                 'last_read_message_id' => $last_read_message_id,
+                'business_type' => $business_type,
             ],
         ]);
     }
@@ -160,11 +162,12 @@ class Chat extends Resource
      * API: v2.sellerchat.unread_conversation
      * To mark a conversation as unread
      */
-    public function unreadConversation($conversation_id)
+    public function unreadConversation($conversation_id, $business_type = 0)
     {
         return $this->call('POST', 'sellerchat/unread_conversation', [
             RequestOptions::JSON => [
                 'conversation_id' => $conversation_id,
+                'business_type' => $business_type,
             ],
         ]);
     }
@@ -197,13 +200,18 @@ class Chat extends Resource
      * 1. To send automatic messages. Automatic messages can only be in the form of text messages.
      * 2. Currently TW region is not supported to send auto-reply messages.
      */
-    public function sendAutoreplyMessage($to_id, $content)
+    public function sendAutoreplyMessage($to_id, $content, $business_type = 0, $conversation_id = 0)
     {
+        $params = [
+            'to_id' => $to_id,
+            'content' => $content,
+        ];
+        if ($business_type > 0 && $conversation_id > 0) {
+            $params['business_type'] = $business_type;
+            $params['conversation_id'] = $conversation_id;
+        }
         return $this->call('POST', 'sellerchat/send_autoreply_message', [
-            RequestOptions::JSON => [
-                'to_id' => $to_id,
-                'content' => $content,
-            ],
+            RequestOptions::JSON => $params,
         ]);
     }
 
@@ -224,13 +232,18 @@ class Chat extends Resource
      * API: v2.sellerchat.delete_message
      * to delete a message
      */
-    public function deleteMessage($message_id, $message_type)
+    public function deleteMessage($message_id, $message_type, $business_type = 0, $conversation_id = 0)
     {
+        $params = [
+            'message_id' => $message_id,
+            'message_type' => $message_type,
+        ];
+        if ($business_type > 0 && $conversation_id > 0) {
+            $params['business_type'] = $business_type;
+            $params['conversation_id'] = $conversation_id;
+        }
         return $this->call('POST', 'sellerchat/delete_message', [
-            RequestOptions::JSON => [
-                'message_id' => $message_id,
-                'message_type' => $message_type
-            ],
+            RequestOptions::JSON => $params
         ]);
     }
 
